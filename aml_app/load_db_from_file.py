@@ -1,41 +1,14 @@
 from pandas_loader import load_dataframe
 import sys
 import re
-from .models import Patient, FishTestComponentResult
+from .models import Patient, FishTestComponentResult, CytogeneticAbnormality, \
+    ImmunophenotypeCytochemistryTestingResult, \
+    MolecularAnalysisAbnormalityTestingResult
 import pandas as pd
 import numpy as np
 
 def remove_field_index(field):
     return re.sub('\-\d+', '', field)
-
-# def get_many2many_objs(df, mult_field_cols, subfields, class_type):
-#     print("mult_field_cols", mult_field_cols)
-#     print("subfields", subfields)
-
-#     # get ets of values of the subfields
-#     all_vals = pd.DataFrame(columns=[remove_field_index(mult_field_cols[0]) + "." + sf for sf in subfields])
-#     print("all_vals", all_vals)
-#     for field_col in mult_field_cols:
-#         subfield_cols = [field_col + "." + sf for sf in subfields]
-#         print("subfield_cols", subfield_cols)
-#         vals = df[subfield_cols]
-#         print("vals", vals)
-#         vals.columns = all_vals.columns
-#         all_vals = pd.concat([all_vals, vals], axis=0)
-#         print("all_vals", all_vals)
-
-#     print(all_vals)
-#     # create objects for the values
-#     objs = []
-#     for i, row in all_vals.iterrows():
-#         print("row", row)
-#         obj = class_type()
-#         for subfield_col in all_vals.columns:
-#             setattr(obj, subfield_col.split(".")[1], row[subfield_col])
-#         objs.append(obj)
-
-#     return objs
-
 
 def load_db(fn):
     df = load_dataframe(fn)
@@ -56,16 +29,59 @@ def load_db(fn):
 
     print(list(df.columns))
 
+   # MolecularAnalysisAbnormalityTestingResult
+    obj_map = {}
+    for i in range(8):
+        print("i", i)
+        base = "molecular_analysis_abnormality_testing_result_values" + ("-%d" % (i+1) if i > 0 else "")
+        pct_val_col = base + ".molecular_analysis_abnormality_testing_percentage_value"
+        result_col = base + ".molecular_analysis_abnormality_testing_result"
+        objs = []
+        for i, row in df.iterrows():
+            # print("row names", list(row.index))
+            key = (row[pct_val_col], row[result_col])
+            if key not in obj_map:
+                obj = MolecularAnalysisAbnormalityTestingResult()
+                obj.molecular_analysis_abnormality_testing_percentage_value = row[pct_val_col]
+                obj.molecular_analysis_abnormality_testing_result = row[result_col]
+                obj.save()
+                obj_map[key] = obj
+            objs.append(obj_map[key])
+
+        for patient, obj in zip(patients, objs):
+            if isinstance(obj.molecular_analysis_abnormality_testing_result, str):
+                patient.molecular_analysis_abnormality_testing_result.add(obj)
+
+    # Cytogenetic abnormality
+    obj_map = {}
+    for i in range(4):
+        print("i", i)
+        col = "cytogenetic_abnormality" + ("-%d" % (i+1) if i > 0 else "")
+        objs = []
+        for i, row in df.iterrows():
+            # print("row names", list(row.index))
+            key = row[col]
+            if key not in obj_map:
+                obj = CytogeneticAbnormality()
+                obj.cytogenetic_abnormality = row[col]
+                obj.save()
+                obj_map[key] = obj
+            objs.append(obj_map[key])
+
+        for patient, obj in zip(patients, objs):
+            if isinstance(obj.cytogenetic_abnormality, str):
+                patient.cytogenetic_abnormality.add(obj)
+
     # Fish Test Component
+    obj_map = {}
     for i in range(9):
         print("i", i)
         base = "fish_test_component_result" + ("-%d" % (i+1) if i > 0 else "")
         component_col = base + ".fish_test_component"
         pct_val_col = base + ".fish_test_component_percentage_value"
-        obj_map = {}
         objs = []
         for i, row in df.iterrows():
-            print("row names", list(row.index))
+            # print("row names", list(row.index))
             key = (row[component_col], row[pct_val_col])
             if key not in obj_map:
                 obj = FishTestComponentResult()
@@ -76,6 +92,29 @@ def load_db(fn):
             objs.append(obj_map[key])
 
         for patient, obj in zip(patients, objs):
-            # print("obj.fish_test_component", obj.fish_test_component)
             if isinstance(obj.fish_test_component, str):
                 patient.fish_test_component.add(obj)
+
+    # Immunophenotype Cytochemistry
+    obj_map = {}
+    for i in range(21):
+        print("i", i)
+        base = "immunophenotype_cytochemistry_testing_result" + ("-%d" % (i+1) if i > 0 else "")
+        pct_pos_col = base + ".immunophenotype_cytochemistry_percent_positive"
+        result_col = base + ".immunophenotype_cytochemistry_testing_result"
+        objs = []
+        for i, row in df.iterrows():
+            # print("row names", list(row.index))
+            key = (row[pct_pos_col], row[result_col])
+            if key not in obj_map:
+                obj = ImmunophenotypeCytochemistryTestingResult()
+                obj.immunophenotype_cytochemistry_percent_positive = row[pct_pos_col]
+                obj.immunophenotype_cytochemistry_testing_result = row[result_col]
+                obj.save()
+                obj_map[key] = obj
+            objs.append(obj_map[key])
+
+        for patient, obj in zip(patients, objs):
+            if isinstance(obj.immunophenotype_cytochemistry_testing_result, str):
+                patient.immunophenotype_cytochemistry_testing_result.add(obj)
+

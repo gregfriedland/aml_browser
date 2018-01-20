@@ -4,12 +4,12 @@ import numpy as np
 import re
 
 def simplify_field(f):
-	# f = f.replace("patient.cytogenetic_abnormalities.cytogenetic_abnormality",
-	# 	"patient.cytogenetic_abnormality")
+	f = f.replace("patient.cytogenetic_abnormalities.cytogenetic_abnormality",
+		"patient.cytogenetic_abnormality")
 	f = f.replace("patient.fish_test_component_results.fish_test_component_result",
 		"patient.fish_test_component_result")
 	f = f.replace("molecular_analysis_abnormality_testing_results.molecular_analysis_abnormality_testing_result_values",
-		"molecular_analysis_abnormality_testing_result")
+		"molecular_analysis_abnormality_testing_result_values")
 	f = f.replace("immunophenotype_cytochemistry_testing_results.immunophenotype_cytochemistry_testing_result_values",
 		"immunophenotype_cytochemistry_testing_result")
 	f = f.replace("race_list.race", "race")
@@ -37,6 +37,8 @@ def load_dataframe(fn):
 	for field in ["molecular_analysis_abnormality_testing_results",
 		 "fish_test_component_results"]:
 		del df[field]
+
+	df = df.fillna("")
 
 	return df
 
