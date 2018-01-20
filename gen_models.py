@@ -47,32 +47,37 @@ def simplify_field(f):
 	f = f.replace("race_list.race", "race")
 	return f
 
-table_fn = sys.argv[1]
-txt = open(table_fn).read()
-lines = txt.strip().split("\n")
+def gen_models(fn):
+	txt = open(fn).read()
+	lines = txt.strip().split("\n")
 
-data = {}
-for line in lines[1:]:
-	toks = line.split("\t")
-	field = toks[0]
-	if not field.startswith("patient.") or ignore_field(field):
-		continue
+	data = {}
+	for line in lines[1:]:
+		toks = line.split("\t")
+		field = toks[0]
+		if not field.startswith("patient.") or ignore_field(field):
+			continue
 
-	# change some field names to remove redundancy
-	simple_field = simplify_field(field)
+		# change some field names to remove redundancy
+		simple_field = simplify_field(field)
 
-	data[simple_field] = toks[1:]
+		data[simple_field] = toks[1:]
 
-# construct field tree
-field_tree = FieldTree()
-for field in data:
-	print(field)
-	field_tree.add_field(field)
+	# construct field tree
+	field_tree = FieldTree()
+	for field in data:
+		print(field)
+		field_tree.add_field(field)
 
-if DEBUG:
-	print(field_tree)
+	if DEBUG:
+		print(field_tree)
 
-print()
-field_tree.walk(gen_model_str)
+	print()
+	field_tree.walk(gen_model_str)
 
+
+if __name__ == "__main__":
+	fn = sys.argv[1]
+
+	gen_models(fn)
 
