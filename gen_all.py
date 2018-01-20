@@ -15,3 +15,5 @@ if __name__ == "__main__":
 	pd.set_option('display.max_columns', 500)
 	pd.set_option('display.width', 250)
 	print(df)
+
+	gen_inserts(df)

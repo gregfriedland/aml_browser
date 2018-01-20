@@ -29,6 +29,9 @@ def gen_model_str(field_name, many, subfields):
 			s += "    %s = CharField(max_length=32)\n" % name
 	print(s)
 
+def remove_field_index(field):
+	return re.sub('\-\d+', '', field)
+
 def ignore_field(f):
 	return f in [
 		"patient.molecular_analysis_abnormality_testing_results",
@@ -75,6 +78,13 @@ def gen_models(fn):
 	print()
 	field_tree.walk(gen_model_str)
 
+def gen_inserts(df):
+	field_map = {}
+	for field in df.columns:
+		field_map.setdefault(remove_field_index(field), []).append(field)
+
+	for row in df.iterrows():
+		print(row)
 
 if __name__ == "__main__":
 	fn = sys.argv[1]
