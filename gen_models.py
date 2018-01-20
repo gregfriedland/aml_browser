@@ -83,11 +83,17 @@ def gen_inserts(df):
 	for field in df.columns:
 		field_map.setdefault(remove_field_index(field), []).append(field)
 
-	for row in df.iterrows():
-		print(row)
+	for rowindex, row in df.iterrows():
+		print("Patient(", end="")
+		for i, (field, val) in enumerate(row.iteritems()):
+			print("%s='%s'" % (field, val), end="")
+			if i != len(row) - 1:
+				print(", ", end="")
+		print(")")
 
 if __name__ == "__main__":
 	fn = sys.argv[1]
 
 	gen_models(fn)
+
 

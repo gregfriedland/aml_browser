@@ -4,8 +4,8 @@ import numpy as np
 import re
 
 def simplify_field(f):
-	f = f.replace("patient.cytogenetic_abnormalities.cytogenetic_abnormality",
-		"patient.cytogenetic_abnormality")
+	# f = f.replace("patient.cytogenetic_abnormalities.cytogenetic_abnormality",
+	# 	"patient.cytogenetic_abnormality")
 	f = f.replace("patient.fish_test_component_results.fish_test_component_result",
 		"patient.fish_test_component_result")
 	f = f.replace("molecular_analysis_abnormality_testing_results.molecular_analysis_abnormality_testing_result_values",
@@ -13,6 +13,7 @@ def simplify_field(f):
 	f = f.replace("immunophenotype_cytochemistry_testing_results.immunophenotype_cytochemistry_testing_result_values",
 		"immunophenotype_cytochemistry_testing_result")
 	f = f.replace("race_list.race", "race")
+	f = f.replace("patient.", "")
 	return f
 
 def to_camel_case(field):
@@ -37,7 +38,7 @@ def load_dataframe(fn):
 			 "patient.fish_test_component_results"]:
 			del df[field]
 
-		df.columns = [simplify_field(c) for c in df.columns]
+	df.columns = [simplify_field(c) for c in df.columns]
 
 	return df
 

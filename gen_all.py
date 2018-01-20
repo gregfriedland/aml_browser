@@ -1,5 +1,5 @@
 from pandas_loader import load_dataframe
-from gen_models import gen_models
+from gen_models import gen_models, gen_inserts
 import sys
 import pandas as pd
 
