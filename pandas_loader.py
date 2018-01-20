@@ -32,13 +32,11 @@ def load_dataframe(fn):
 	df.columns = df.iloc[0]
 	df = df.drop(df.index[0]) # drop the row with the columns names
 
-	for field in df.columns:
-		if not field.startswith("patient.") or field in \
-		 	["patient.molecular_analysis_abnormality_testing_results",
-			 "patient.fish_test_component_results"]:
-			del df[field]
-
 	df.columns = [simplify_field(c) for c in df.columns]
+
+	for field in ["molecular_analysis_abnormality_testing_results",
+		 "fish_test_component_results"]:
+		del df[field]
 
 	return df
 

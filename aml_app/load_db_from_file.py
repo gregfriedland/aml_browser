@@ -3,6 +3,7 @@ import sys
 import re
 from .models import Patient, FishTestComponentResult
 import pandas as pd
+import numpy as np
 
 def remove_field_index(field):
     return re.sub('\-\d+', '', field)
@@ -49,6 +50,7 @@ def load_db(fn):
         for i, (field, val) in enumerate(row.iteritems()):
             if len(field_map[remove_field_index(field)]) == 1:
                 setattr(p, field, val)
+        p.save()
         patients.append(p)
 
 
@@ -60,13 +62,20 @@ def load_db(fn):
         base = "fish_test_component_result" + ("-%d" % (i+1) if i > 0 else "")
         component_col = base + ".fish_test_component"
         pct_val_col = base + ".fish_test_component_percentage_value"
+        obj_map = {}
         objs = []
         for i, row in df.iterrows():
             print("row names", list(row.index))
-            obj = FishTestComponentResult()
-            obj.fish_test_component = row[component_col]
-            obj.fish_test_percentage_value = row[pct_val_col]
-            objs.append(obj)
+            key = (row[component_col], row[pct_val_col])
+            if key not in obj_map:
+                obj = FishTestComponentResult()
+                obj.fish_test_component = row[component_col]
+                obj.fish_test_percentage_value = row[pct_val_col]
+                obj.save()
+                obj_map[key] = obj
+            objs.append(obj_map[key])
 
         for patient, obj in zip(patients, objs):
-            patient.fish_test_component = obj
+            # print("obj.fish_test_component", obj.fish_test_component)
+            if isinstance(obj.fish_test_component, str):
+                patient.fish_test_component.add(obj)
