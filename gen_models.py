@@ -17,7 +17,7 @@ def gen_model_str(field_name, many, subfields):
 	if len(subfields) == 0:
 		if many:
 			s = "%s(Model):\n" % to_camel_case(field_name)
-			s += "    str = CharField(max_length=64)\n"
+			s += "    str = CharField(max_length=32)\n"
 			print(s)
 		return
 
@@ -29,34 +29,43 @@ def gen_model_str(field_name, many, subfields):
 			s += "    %s = CharField(max_length=32)\n" % name
 	print(s)
 
+def ignore_field(f):
+	return f in [
+		"patient.molecular_analysis_abnormality_testing_results",
+		"fish_test_component_results"
+	]
+
+def simplify_field(f):
+	f = f.replace("patient.cytogenetic_abnormalities.cytogenetic_abnormality",
+		"patient.cytogenetic_abnormality")
+	f = f.replace("patient.fish_test_component_results.fish_test_component_result",
+		"patient.fish_test_component_result")
+	f = f.replace("molecular_analysis_abnormality_testing_results.molecular_analysis_abnormality_testing_result_values",
+		"molecular_analysis_abnormality_testing_result")
+	f = f.replace("immunophenotype_cytochemistry_testing_results.immunophenotype_cytochemistry_testing_result_values",
+		"immunophenotype_cytochemistry_testing_result")
+	f = f.replace("race_list.race", "race")
+	return f
 
 table_fn = sys.argv[1]
 txt = open(table_fn).read()
 lines = txt.strip().split("\n")
-fields = [line.split("\t")[0] for line in lines[1:]]
 
-# change some field names
-for i in range(len(fields)):
-	fields[i] = fields[i].replace("patient.cytogenetic_abnormalities.cytogenetic_abnormality",
-		"patient.cytogenetic_abnormality")
-	fields[i] = fields[i].replace("patient.fish_test_component_results.fish_test_component_result",
-		"patient.fish_test_component_result")
-	fields[i] = fields[i].replace("molecular_analysis_abnormality_testing_results.molecular_analysis_abnormality_testing_result_values",
-		"molecular_analysis_abnormality_testing_result")
-	fields[i] = fields[i].replace("immunophenotype_cytochemistry_testing_results.immunophenotype_cytochemistry_testing_result_values",
-		"immunophenotype_cytochemistry_testing_result")
+data = {}
+for line in lines[1:]:
+	toks = line.split("\t")
+	field = toks[0]
+	if not field.startswith("patient.") or ignore_field(field):
+		continue
 
-# fields_map = {}
-# for field in fields:
-# 	fields_map.setdefault(remove_field_index(field), []).append(field)
+	# change some field names to remove redundancy
+	simple_field = simplify_field(field)
 
-# if DEBUG:
-# 	for uniq_field, fields in fields_map.items():
-# 		print(len(fields), uniq_field)
+	data[simple_field] = toks[1:]
 
 # construct field tree
 field_tree = FieldTree()
-for field in fields:
+for field in data:
 	print(field)
 	field_tree.add_field(field)
 
@@ -65,3 +74,5 @@ if DEBUG:
 
 print()
 field_tree.walk(gen_model_str)
+
+
