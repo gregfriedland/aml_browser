@@ -13,6 +13,7 @@ def remove_field_index(field):
 def load_db(fn):
     df = load_dataframe(fn)
 
+
     field_map = {}
     for field in df.columns:
         field_map.setdefault(remove_field_index(field), []).append(field)
@@ -29,8 +30,11 @@ def load_db(fn):
 
     print(list(df.columns))
 
-   # MolecularAnalysisAbnormalityTestingResult
     obj_map = {}
+
+    # MolecularAnalysisAbnormalityTestingResult
+    # Note: ignore percentage_value field because it's always empty
+    print("MolecularAnalysisAbnormalityTestingResult")
     for i in range(8):
         print("i", i)
         base = "molecular_analysis_abnormality_testing_result_values" + ("-%d" % (i+1) if i > 0 else "")
@@ -38,28 +42,27 @@ def load_db(fn):
         result_col = base + ".molecular_analysis_abnormality_testing_result"
         objs = []
         for i, row in df.iterrows():
-            # print("row names", list(row.index))
-            key = (row[pct_val_col], row[result_col])
+            key = row[result_col]
             if key not in obj_map:
                 obj = MolecularAnalysisAbnormalityTestingResult()
-                obj.molecular_analysis_abnormality_testing_percentage_value = row[pct_val_col]
+                # obj.molecular_analysis_abnormality_testing_percentage_value = str(row[pct_val_col])
                 obj.molecular_analysis_abnormality_testing_result = row[result_col]
                 obj.save()
                 obj_map[key] = obj
             objs.append(obj_map[key])
 
         for patient, obj in zip(patients, objs):
-            if isinstance(obj.molecular_analysis_abnormality_testing_result, str):
+            if obj.molecular_analysis_abnormality_testing_result != "":
                 patient.molecular_analysis_abnormality_testing_result.add(obj)
 
     # Cytogenetic abnormality
+    print("CytogenicAbnormality")
     obj_map = {}
     for i in range(4):
         print("i", i)
         col = "cytogenetic_abnormality" + ("-%d" % (i+1) if i > 0 else "")
         objs = []
         for i, row in df.iterrows():
-            # print("row names", list(row.index))
             key = row[col]
             if key not in obj_map:
                 obj = CytogeneticAbnormality()
@@ -69,10 +72,13 @@ def load_db(fn):
             objs.append(obj_map[key])
 
         for patient, obj in zip(patients, objs):
-            if isinstance(obj.cytogenetic_abnormality, str):
+            if obj.cytogenetic_abnormality != "":
                 patient.cytogenetic_abnormality.add(obj)
 
     # Fish Test Component
+    # Note: percentage_value field here is not empty so don't ignore it; fish_test_component should
+    # be in a separate table
+    print("Fish")
     obj_map = {}
     for i in range(9):
         print("i", i)
@@ -81,21 +87,22 @@ def load_db(fn):
         pct_val_col = base + ".fish_test_component_percentage_value"
         objs = []
         for i, row in df.iterrows():
-            # print("row names", list(row.index))
             key = (row[component_col], row[pct_val_col])
             if key not in obj_map:
                 obj = FishTestComponentResult()
                 obj.fish_test_component = row[component_col]
-                obj.fish_test_percentage_value = row[pct_val_col]
+                obj.fish_test_component_percentage_value = row[pct_val_col]
                 obj.save()
                 obj_map[key] = obj
             objs.append(obj_map[key])
 
         for patient, obj in zip(patients, objs):
-            if isinstance(obj.fish_test_component, str):
+            if obj.fish_test_component != "":
                 patient.fish_test_component.add(obj)
 
     # Immunophenotype Cytochemistry
+    # Note: ignore percentage_positive field because it's always empty
+    print("Immunophenotype")
     obj_map = {}
     for i in range(21):
         print("i", i)
@@ -104,17 +111,16 @@ def load_db(fn):
         result_col = base + ".immunophenotype_cytochemistry_testing_result"
         objs = []
         for i, row in df.iterrows():
-            # print("row names", list(row.index))
-            key = (row[pct_pos_col], row[result_col])
+            key = row[result_col]
             if key not in obj_map:
                 obj = ImmunophenotypeCytochemistryTestingResult()
-                obj.immunophenotype_cytochemistry_percent_positive = row[pct_pos_col]
+                # obj.immunophenotype_cytochemistry_percent_positive = row[pct_pos_col]
                 obj.immunophenotype_cytochemistry_testing_result = row[result_col]
                 obj.save()
                 obj_map[key] = obj
             objs.append(obj_map[key])
 
         for patient, obj in zip(patients, objs):
-            if isinstance(obj.immunophenotype_cytochemistry_testing_result, str):
+            if obj.immunophenotype_cytochemistry_testing_result != "":
                 patient.immunophenotype_cytochemistry_testing_result.add(obj)
 

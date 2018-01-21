@@ -8,11 +8,11 @@ class FishTestComponentResult(models.Model):
     fish_test_component_percentage_value = models.CharField(max_length=32, default="")
 
 class ImmunophenotypeCytochemistryTestingResult(models.Model):
-    immunophenotype_cytochemistry_percent_positive = models.CharField(max_length=32, default="")
+    # immunophenotype_cytochemistry_percent_positive = models.CharField(max_length=32, default="")
     immunophenotype_cytochemistry_testing_result = models.CharField(max_length=32, default="")
 
 class MolecularAnalysisAbnormalityTestingResult(models.Model):
-    molecular_analysis_abnormality_testing_percentage_value = models.CharField(max_length=32, default="")
+    # molecular_analysis_abnormality_testing_percentage_value = models.CharField(max_length=32, default="")
     molecular_analysis_abnormality_testing_result = models.CharField(max_length=32, default="")
 
 
