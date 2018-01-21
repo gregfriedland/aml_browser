@@ -3,14 +3,18 @@ from django.db import models
 class CytogeneticAbnormality(models.Model):
     cytogenetic_abnormality = models.CharField(max_length=32, default="")
 
+# Note: percentage_value field here is not empty so don't ignore it; fish_test_component should
+# be in a separate table
 class FishTestComponentResult(models.Model):
     fish_test_component = models.CharField(max_length=32, default="")
     fish_test_component_percentage_value = models.CharField(max_length=32, default="")
 
+# Note: ignore percentage_positive field because it's always empty
 class ImmunophenotypeCytochemistryTestingResult(models.Model):
     # immunophenotype_cytochemistry_percent_positive = models.CharField(max_length=32, default="")
     immunophenotype_cytochemistry_testing_result = models.CharField(max_length=32, default="")
 
+# Note: ignore percentage_value field because it's always empty
 class MolecularAnalysisAbnormalityTestingResult(models.Model):
     # molecular_analysis_abnormality_testing_percentage_value = models.CharField(max_length=32, default="")
     molecular_analysis_abnormality_testing_result = models.CharField(max_length=32, default="")
@@ -98,3 +102,5 @@ class Patient(models.Model):
     year_of_form_completion = models.CharField(max_length=32, default="")
     year_of_initial_pathologic_diagnosis = models.CharField(max_length=32, default="")
 
+    def get_fields(self):
+        return [(field.name, field.value_to_string(self)) for field in Patient._meta.fields]

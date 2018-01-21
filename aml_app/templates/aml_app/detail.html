@@ -1,0 +1,8 @@
+<h1>{{ patient.patient_id }}</h1>
+<ul>
+{% for name, value in patient.get_fields %}
+  {% if value %}
+    <li>{{ name }} => {{ value }}</li>
+  {% endif %}
+{% endfor %}
+</ul>

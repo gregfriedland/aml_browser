@@ -33,7 +33,6 @@ def load_db(fn):
     obj_map = {}
 
     # MolecularAnalysisAbnormalityTestingResult
-    # Note: ignore percentage_value field because it's always empty
     print("MolecularAnalysisAbnormalityTestingResult")
     for i in range(8):
         print("i", i)
@@ -76,8 +75,6 @@ def load_db(fn):
                 patient.cytogenetic_abnormality.add(obj)
 
     # Fish Test Component
-    # Note: percentage_value field here is not empty so don't ignore it; fish_test_component should
-    # be in a separate table
     print("Fish")
     obj_map = {}
     for i in range(9):
@@ -101,7 +98,6 @@ def load_db(fn):
                 patient.fish_test_component.add(obj)
 
     # Immunophenotype Cytochemistry
-    # Note: ignore percentage_positive field because it's always empty
     print("Immunophenotype")
     obj_map = {}
     for i in range(21):
