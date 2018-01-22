@@ -72,6 +72,8 @@
 	    render: function () {
 	        if (this.state.data) {
 	            console.log('DATA!');
+
+	            // construct a table with the results for each patient
 	            var i = 1;
 	            var patients = this.state.data.map(function (patient) {
 	                var url = "/aml/" + i;

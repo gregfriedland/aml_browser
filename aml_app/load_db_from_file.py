@@ -13,7 +13,6 @@ def remove_field_index(field):
 def load_db(fn):
     df = load_dataframe(fn)
 
-
     field_map = {}
     for field in df.columns:
         field_map.setdefault(remove_field_index(field), []).append(field)
@@ -26,7 +25,6 @@ def load_db(fn):
                 setattr(p, field, val)
         p.save()
         patients.append(p)
-
 
     print(list(df.columns))
 

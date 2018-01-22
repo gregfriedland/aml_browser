@@ -79,6 +79,9 @@
 	            console.log('DATA!');
 	            var patient = this.state.data;
 	        }
+
+	        // Construct a table with the results; complex fields like arrays and objects
+	        // get their own nested tables
 	        var table_body = [];
 	        for (field in patient) {
 	            var val;
@@ -103,7 +106,6 @@
 	                    )
 	                ));
 	            } else if (Array.isArray(patient[field]) && patient[field].length > 0) {
-	                console.log(patient[field]);
 	                if (typeof patient[field][0] === "string") {
 	                    var sub_rows = [];
 	                    for (var i = 0; i < patient[field].length; i++) {
