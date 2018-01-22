@@ -1,42 +1,12 @@
-<h1>{{ patient.patient_id }}</h1>
-<ul>
-{% for name, value in patient.get_fields %}
-  {% if value %}
-    <li>{{ name }} => {{ value }}</li>
-  {% endif %}
-{% endfor %}
+{% load render_bundle from webpack_loader %}
 
-<li>Cytogenetic Abnormality
-	<ul>
-{% for cytogenetic_abnormality in patient.cytogenetic_abnormality.all %}
-    <li>{{ cytogenetic_abnormality.cytogenetic_abnormality }}</li>
-{% endfor %}
-	</ul>
-</li>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  </head>
 
-<li>Fish Test Component Result
-	<ul>
-{% for fish_test_component_result in patient.fish_test_component.all %}
-    <li>{{ fish_test_component_result.fish_test_component }} : 
-    	{{ fish_test_component_result.fish_test_component_percentage_value }}%</li>
-{% endfor %}
-	</ul>
-</li>
+ <body>
+ 	<div id="container"/>
+	{% render_bundle 'detail' %}
+ </body>
 
-<li>Immunophenotype Cytochemistry Testing Result
-	<ul>
-{% for immunophenotype_cytochemistry_testing_result in patient.immunophenotype_cytochemistry_testing_result.all %}
-    <li>{{ immunophenotype_cytochemistry_testing_result.immunophenotype_cytochemistry_testing_result }} </li> 
-{% endfor %}
-	</ul>
-</li>
-
-<li>Molecular Analysis Abnormality Testing Result
-	<ul>
-{% for molecular_analysis_abnormality_testing_result in patient.molecular_analysis_abnormality_testing_result.all %}
-    <li>{{ molecular_analysis_abnormality_testing_result.molecular_analysis_abnormality_testing_result }} </li> 
-{% endfor %}
-	</ul>
-</li>
-
-</ul>

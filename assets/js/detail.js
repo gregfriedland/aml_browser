@@ -1,8 +1,13 @@
 var React = require('react')
 var ReactDOM = require('react-dom')
 
-var PatientList = React.createClass({
-    loadPatientsFromServer: function(){
+var path = new URL(window.location).pathname;
+path = path.replace(/\/$/, "");
+var patient_pk = path.split("/").pop();
+var patient_url = '/aml/patient/' + patient_pk + '/v1';
+
+var Patient = React.createClass({
+    loadOnePatientFromServer: function(){
         $.ajax({
             url: this.props.url,
             datatype: 'json',
@@ -18,27 +23,26 @@ var PatientList = React.createClass({
     },
 
     componentDidMount: function() {
-        this.loadPatientsFromServer();
-        setInterval(this.loadPatientsFromServer, 
+        this.loadOnePatientFromServer();
+        setInterval(this.loadOnePatientFromServer, 
                     this.props.pollInterval)
     }, 
     render: function() {
         if (this.state.data) {
             console.log('DATA!')
-            var patients = this.state.data.map(function(patient){
-                return <li> {patient.patient_id} </li>
-            })
+            var patient = this.state.data;
         }
         return (
             <div>
-                <h1>Hello React!</h1>
+                <h1>Hello detail!</h1>
                 <ul>
-                    {patients}
+                    {patient.patient_id}
                 </ul>
             </div>
         )
     }
 })
 
-ReactDOM.render(<PatientList url='/aml/patient/v1' pollInterval={10000} />, 
+ReactDOM.render(<Patient url={patient_url} pollInterval={10000} />, 
     document.getElementById('container'))
+
