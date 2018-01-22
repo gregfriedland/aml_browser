@@ -4,7 +4,6 @@ from .models import Patient
 
 def detail(request, patient_pk):
     patient = get_object_or_404(Patient, pk=patient_pk)
-    print(patient.cytogenetic_abnormality.all())
     return render(request, 'aml_app/detail.html', {'patient': patient})
 
 def index(request):

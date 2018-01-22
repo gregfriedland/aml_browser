@@ -79,18 +79,155 @@
 	            console.log('DATA!');
 	            var patient = this.state.data;
 	        }
+	        var table_body = [];
+	        for (field in patient) {
+	            var val;
+	            if (typeof patient[field] === "string") {
+	                val = patient[field];
+	                table_body.push(React.createElement(
+	                    'tr',
+	                    null,
+	                    React.createElement(
+	                        'td',
+	                        null,
+	                        React.createElement(
+	                            'b',
+	                            null,
+	                            field
+	                        )
+	                    ),
+	                    React.createElement(
+	                        'td',
+	                        null,
+	                        val
+	                    )
+	                ));
+	            } else if (Array.isArray(patient[field]) && patient[field].length > 0) {
+	                console.log(patient[field]);
+	                if (typeof patient[field][0] === "string") {
+	                    var sub_rows = [];
+	                    for (var i = 0; i < patient[field].length; i++) {
+	                        sub_rows.push(React.createElement(
+	                            'tr',
+	                            null,
+	                            React.createElement(
+	                                'td',
+	                                null,
+	                                patient[field][i]
+	                            )
+	                        ));
+	                    }
+	                    val = React.createElement(
+	                        'div',
+	                        null,
+	                        React.createElement(
+	                            'table',
+	                            { className: 'ui celled table' },
+	                            React.createElement('thead', null),
+	                            React.createElement(
+	                                'tbody',
+	                                null,
+	                                sub_rows
+	                            )
+	                        )
+	                    );
+	                } else {
+	                    var cols = Object.keys(patient[field][0]);
+	                    var sub_header = [];
+	                    for (var i = 0; i < cols.length; i++) {
+	                        sub_header.push(React.createElement(
+	                            'th',
+	                            null,
+	                            cols[i]
+	                        ));
+	                    }
+	                    var sub_rows = [];
+	                    for (var i = 0; i < patient[field].length; i++) {
+	                        var sub_row = [];
+	                        for (var c = 0; c < cols.length; c++) {
+	                            sub_row.push(React.createElement(
+	                                'td',
+	                                null,
+	                                patient[field][i][cols[c]]
+	                            ));
+	                        }
+	                        sub_rows.push(React.createElement(
+	                            'tr',
+	                            null,
+	                            sub_row
+	                        ));
+	                    }
+	                    val = React.createElement(
+	                        'div',
+	                        null,
+	                        React.createElement(
+	                            'table',
+	                            { className: 'ui celled table' },
+	                            React.createElement(
+	                                'thead',
+	                                null,
+	                                sub_header
+	                            ),
+	                            React.createElement(
+	                                'tbody',
+	                                null,
+	                                sub_rows
+	                            )
+	                        )
+	                    );
+	                }
+	                table_body.push(React.createElement(
+	                    'tr',
+	                    null,
+	                    React.createElement(
+	                        'td',
+	                        null,
+	                        React.createElement(
+	                            'b',
+	                            null,
+	                            field
+	                        )
+	                    ),
+	                    React.createElement(
+	                        'td',
+	                        null,
+	                        val
+	                    )
+	                ));
+	            } else {
+	                table_body.push(React.createElement(
+	                    'tr',
+	                    null,
+	                    React.createElement(
+	                        'td',
+	                        null,
+	                        React.createElement(
+	                            'b',
+	                            null,
+	                            field
+	                        )
+	                    ),
+	                    React.createElement('td', null)
+	                ));
+	            }
+	        }
 	        return React.createElement(
 	            'div',
 	            null,
 	            React.createElement(
 	                'h1',
 	                null,
-	                'Hello detail!'
+	                'AML Patient ',
+	                patient.patient_id
 	            ),
 	            React.createElement(
-	                'ul',
-	                null,
-	                patient.patient_id
+	                'table',
+	                { className: 'ui complex table' },
+	                React.createElement(
+	                    'tbody',
+	                    null,
+	                    table_body
+	                )
 	            )
 	        );
 	    }

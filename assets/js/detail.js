@@ -32,12 +32,51 @@ var Patient = React.createClass({
             console.log('DATA!')
             var patient = this.state.data;
         }
+
+        // Construct a table with the results; complex fields like arrays and objects
+        // get their own nested tables
+        var table_body = [];
+        for (field in patient) {
+            var val;
+            if (typeof(patient[field]) === "string") {
+                val = patient[field];
+                table_body.push(<tr><td><b>{field}</b></td><td>{val}</td></tr>);
+            } else if (Array.isArray(patient[field]) && patient[field].length > 0) {
+                if (typeof(patient[field][0]) === "string") {
+                    var sub_rows = [];
+                    for (var i = 0; i < patient[field].length; i++) {
+                        sub_rows.push(<tr><td>{patient[field][i]}</td></tr>);
+                    }
+                    val = <div><table className="ui celled table"><thead></thead><tbody>{sub_rows}</tbody></table></div>;
+                } else {
+                    var cols = Object.keys(patient[field][0]);
+                    var sub_header = [];
+                    for (var i = 0; i < cols.length; i++) {
+                        sub_header.push(<th>{cols[i]}</th>);
+                    }
+                    var sub_rows = [];
+                    for (var i = 0; i < patient[field].length; i++) {
+                        var sub_row = [];
+                        for (var c = 0; c < cols.length; c++) {
+                            sub_row.push(<td>{patient[field][i][cols[c]]}</td>);
+                        }
+                        sub_rows.push(<tr>{sub_row}</tr>);
+                    }
+                    val = <div><table className="ui celled table"><thead>{sub_header}</thead><tbody>{sub_rows}</tbody></table></div>;
+                }
+                table_body.push(<tr><td><b>{field}</b></td><td>{val}</td></tr>);
+            } else {
+                table_body.push(<tr><td><b>{field}</b></td><td></td></tr>);                
+            }
+        }
         return (
             <div>
-                <h1>Hello detail!</h1>
-                <ul>
-                    {patient.patient_id}
-                </ul>
+                <h1>AML Patient {patient.patient_id}</h1>
+                <table className="ui complex table">
+                  <tbody>
+                    {table_body}
+                  </tbody>
+                </table>
             </div>
         )
     }
