@@ -1,4 +1,4 @@
-from pandas_loader import load_dataframe
+from aml_app.pandas_loader import load_dataframe
 import sys
 import re
 from .models import Patient, FishTestComponentResult, CytogeneticAbnormality, \

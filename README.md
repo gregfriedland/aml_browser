@@ -10,7 +10,8 @@ It uses Django, sqlite, Django REST framework, ReactJS, and Semantic UI to provi
 3. Load the data into the DB: `rm -rf db.sqlite3 && python manage.py migrate && python manage.py shell -c "from aml_app.load_db_from_file import load_db; load_db('LAML.merged_only_clinical_clin_format.txt')"`
 
 #### Run the development server ####
-* `python3 manage.py runserver`
+1. `python3 manage.py runserver`
+2. Go to: http://localhost:8000/aml/
 
 #### Regenerate the ReactJS bundles ####
 The ReactJS bundles are included in git. If you modify the code in `assets/js/` they will need to be rebuilt:
