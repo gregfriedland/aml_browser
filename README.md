@@ -1,5 +1,10 @@
+### AML data browser ###
 
-* To load the data into the DB: `rm -rf db.sqlite3 && python manage.py migrate && python manage.py shell -c "from aml_app.load_db_from_file import load_db; load_db('LAML.merged_only_clinical_clin_format.txt')"`
+#### Setup the server ####
+
+1. Setup your virtualenv and activate it
+2. Install requirements: `pip install -r requirements.txt`
+3. Load the data into the DB: `rm -rf db.sqlite3 && python manage.py migrate && python manage.py shell -c "from aml_app.load_db_from_file import load_db; load_db('LAML.merged_only_clinical_clin_format.txt')"`
 
 * To regenerate the ReactJS webpack bundle: `/node_modules/.bin/webpack --config webpack.config.js`
 
