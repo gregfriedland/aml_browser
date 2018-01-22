@@ -1,1 +1,5 @@
 __pycache__
+node_modules
+webpack-stats.json
+db.sqlite3
+package-lock.json

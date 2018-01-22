@@ -6,7 +6,7 @@ from . import models
 class PatientListSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Patient
-        fields = ('patient_id', 'gender')
+        fields = ('patient_id', 'gender', 'ethnicity', 'platelet_result_count', 'vital_status')
 
 class PatientListViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = models.Patient.objects.all()
@@ -39,6 +39,13 @@ class PatientDetailViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = PatientDetailSerializer
 
 urlpatterns = [
-    path('patient', PatientListViewSet.as_view({'get': 'list'})),
-    path('patient/<int:pk>', PatientDetailViewSet.as_view({'get': 'retrieve'})),
+    # API endpoints
+    path('patient/v1', PatientListViewSet.as_view({'get': 'list'})),
+    path('patient/<int:pk>/v1', PatientDetailViewSet.as_view({'get': 'retrieve'})),
+
+    # pages
+    # ex: /aml
+    path('', views.index, name='index'),
+    # ex: /aml/5/
+    path('<int:patient_pk>/', views.detail, name='detail'),
 ]

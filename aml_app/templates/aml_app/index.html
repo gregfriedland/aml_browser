@@ -1,9 +1,12 @@
-{% if patients %}
-    <table>
-    {% for patient in patients %}
-        <tr><td><a href="/aml/{{ patient.id }}/">Patient {{ patient.patient_id }}</a></td></tr>
-    {% endfor %}
-    </table>
-{% else %}
-    <p>No patient data found.</p>
-{% endif %}
+{% load render_bundle from webpack_loader %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  </head>
+
+ <body>
+ 	<div id="container"/>
+	{% render_bundle 'main' %}
+ </body>
+
