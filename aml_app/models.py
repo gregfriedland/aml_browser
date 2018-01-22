@@ -101,6 +101,3 @@ class Patient(models.Model):
     vital_status = models.CharField(max_length=32, default="")
     year_of_form_completion = models.CharField(max_length=32, default="")
     year_of_initial_pathologic_diagnosis = models.CharField(max_length=32, default="")
-
-    def get_fields(self):
-        return [(field.name, field.value_to_string(self)) for field in Patient._meta.fields]

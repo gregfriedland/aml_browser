@@ -40,8 +40,9 @@ class PatientDetailViewSet(viewsets.ReadOnlyModelViewSet):
 
 urlpatterns = [
     # API endpoints
-    path('patient/v1', PatientListViewSet.as_view({'get': 'list'})),
-    path('patient/<int:pk>/v1', PatientDetailViewSet.as_view({'get': 'retrieve'})),
+    path('patient/v1', PatientListViewSet.as_view({'get': 'list'}), name='patients-api'),
+    path('patient/<int:pk>/v1', PatientDetailViewSet.as_view({'get': 'retrieve'}),
+        name='patient-detail-api'),
 
     # pages
     # ex: /aml
