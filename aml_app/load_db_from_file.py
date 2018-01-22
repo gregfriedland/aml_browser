@@ -1,3 +1,8 @@
+# Load the database into the DB from a file.
+# Most fields are loaded as text fields into Patient while 4 of the fields
+# are given ManyToMany relationships to Patient.
+# This code is dependent on the structure of the file not changing.
+
 from aml_app.pandas_loader import load_dataframe
 import sys
 import re
@@ -7,16 +12,21 @@ from .models import Patient, FishTestComponentResult, CytogeneticAbnormality, \
 import pandas as pd
 import numpy as np
 
+# Remove a field index such as "-2" from a field
 def remove_field_index(field):
     return re.sub('\-\d+', '', field)
 
+# Load data into the DB
 def load_db(fn):
+    # Load the data into a pandas DataFrame
     df = load_dataframe(fn)
 
+    # Find fields with multiple indices
     field_map = {}
     for field in df.columns:
         field_map.setdefault(remove_field_index(field), []).append(field)
 
+    # Assign simple fields from the dataframe to the Patient object
     patients = []
     for rowindex, row in df.iterrows():
         p = Patient()
@@ -26,11 +36,11 @@ def load_db(fn):
         p.save()
         patients.append(p)
 
-    print(list(df.columns))
+    # print(list(df.columns))
 
     obj_map = {}
 
-    # MolecularAnalysisAbnormalityTestingResult
+    # Create MolecularAnalysisAbnormalityTestingResult objects and relationships
     print("MolecularAnalysisAbnormalityTestingResult")
     for i in range(8):
         print("i", i)
@@ -52,7 +62,7 @@ def load_db(fn):
             if obj.molecular_analysis_abnormality_testing_result != "":
                 patient.molecular_analysis_abnormality_testing_result.add(obj)
 
-    # Cytogenetic abnormality
+    # Create CytogeneticAbnormality objects and relationships
     print("CytogenicAbnormality")
     obj_map = {}
     for i in range(4):
@@ -72,7 +82,7 @@ def load_db(fn):
             if obj.cytogenetic_abnormality != "":
                 patient.cytogenetic_abnormality.add(obj)
 
-    # Fish Test Component
+    # Create FishTestComponent objects and relationships
     print("Fish")
     obj_map = {}
     for i in range(9):
@@ -95,7 +105,7 @@ def load_db(fn):
             if obj.fish_test_component != "":
                 patient.fish_test_component.add(obj)
 
-    # Immunophenotype Cytochemistry
+    # Create ImmunophenotypeCytochemistry objects and relationships
     print("Immunophenotype")
     obj_map = {}
     for i in range(21):
@@ -117,4 +127,3 @@ def load_db(fn):
         for patient, obj in zip(patients, objs):
             if obj.immunophenotype_cytochemistry_testing_result != "":
                 patient.immunophenotype_cytochemistry_testing_result.add(obj)
-

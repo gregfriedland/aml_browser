@@ -1,8 +1,11 @@
+# Load data from the file into a pandas dataframe
+
 import pandas as pd
 import sys
 import numpy as np
 import re
 
+# Simplify some fields that are needlessly verbose
 def simplify_field(f):
     f = f.replace("patient.cytogenetic_abnormalities.cytogenetic_abnormality",
         "patient.cytogenetic_abnormality")
@@ -16,17 +19,7 @@ def simplify_field(f):
     f = f.replace("patient.", "")
     return f
 
-def to_camel_case(field):
-    s = ""
-    for tok in field.split("_"):
-        s += tok[0].upper()
-        if len(tok) > 0:
-             s += tok[1:]
-    return s
-
-def remove_field_index(field):
-    return re.sub('\-\d+', '', field)
-
+# Create the pandas dataframe from a file
 def load_dataframe(fn):
     df = pd.read_csv(open(fn), sep="\t").transpose()
     df.columns = df.iloc[0]
@@ -34,10 +27,12 @@ def load_dataframe(fn):
 
     df.columns = [simplify_field(c) for c in df.columns]
 
+    # Remove some empty fields
     for field in ["molecular_analysis_abnormality_testing_results",
          "fish_test_component_results"]:
         del df[field]
 
+    # Use strings for missing values
     df = df.fillna("")
 
     return df
@@ -54,33 +49,3 @@ if __name__ == "__main__":
 
     print(df.describe())
     print(df)
-
-# simplify cytogenetic abnormality column
-# cyt_abnorm_cols = [c for c in df.columns if c.startswith("patient.cytogenetic_abnormality")]
-# cyt_abnorms = set()
-# for c in cyt_abnorm_cols:
-#   cyt_abnorms = cyt_abnorms.union(df["patient.cytogenetic_abnormality"].unique())
-# cyt_abnorms = cyt_abnorms.difference(["normal", np.nan])
-# print(cyt_abnorms)
-# for cyt_abnorm in cyt_abnorms:
-#   hasit = df[cyt_abnorm_cols[0]] == cyt_abnorm
-#   for c in cyt_abnorm_cols[1:]:
-#       hasit = hasit | (df[c] == cyt_abnorm)
-#   df["patient.cytogenetic_abnormality." + cyt_abnorm] = hasit
-
-# for c in cyt_abnorm_cols:
-#   del df[c]
-
-# field_map = {}
-# for field in df.columns:
-#   field_map.setdefault(remove_field_index(field), []).append(field)
-
-# print("class Patient(Model):")
-# for field in df.columns:
-#   if field in field_map:
-#       if len(field_map[field]) > 1:
-#           print("    %s = ManyToMany(%s)" % (field, to_camel_case(field)))
-#       else:
-#           print("    %s = CharField(max_length=32)" % field)
-
-# for row in df.iterrows():
