@@ -3,3 +3,6 @@
 
 * To run the django server: `python3 manage.py runserver`
 
+* To install gulp: `npm install -g gulp`
+
+* To rebuild semantic-ui: `cd assets/semantic && gulp build`

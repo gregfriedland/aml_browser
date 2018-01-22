@@ -72,13 +72,42 @@
 	    render: function () {
 	        if (this.state.data) {
 	            console.log('DATA!');
+	            var i = 1;
 	            var patients = this.state.data.map(function (patient) {
+	                var url = "/aml/" + i;
+	                i = i + 1;
 	                return React.createElement(
-	                    'li',
+	                    'tr',
 	                    null,
-	                    ' ',
-	                    patient.patient_id,
-	                    ' '
+	                    React.createElement(
+	                        'td',
+	                        null,
+	                        React.createElement(
+	                            'a',
+	                            { href: url },
+	                            patient.patient_id
+	                        )
+	                    ),
+	                    React.createElement(
+	                        'td',
+	                        null,
+	                        patient.gender
+	                    ),
+	                    React.createElement(
+	                        'td',
+	                        null,
+	                        patient.ethnicity
+	                    ),
+	                    React.createElement(
+	                        'td',
+	                        null,
+	                        patient.platelet_result_count
+	                    ),
+	                    React.createElement(
+	                        'td',
+	                        null,
+	                        patient.vital_status
+	                    )
 	                );
 	            });
 	        }
@@ -88,12 +117,49 @@
 	            React.createElement(
 	                'h1',
 	                null,
-	                'Hello React!'
+	                'AML Patients'
 	            ),
 	            React.createElement(
-	                'ul',
-	                null,
-	                patients
+	                'table',
+	                { className: 'ui celled table' },
+	                React.createElement(
+	                    'thead',
+	                    null,
+	                    React.createElement(
+	                        'tr',
+	                        null,
+	                        React.createElement(
+	                            'th',
+	                            null,
+	                            'Patient ID'
+	                        ),
+	                        React.createElement(
+	                            'th',
+	                            null,
+	                            'Gender'
+	                        ),
+	                        React.createElement(
+	                            'th',
+	                            null,
+	                            'Ethnicity'
+	                        ),
+	                        React.createElement(
+	                            'th',
+	                            null,
+	                            'Platelet Count'
+	                        ),
+	                        React.createElement(
+	                            'th',
+	                            null,
+	                            'Vital Status'
+	                        )
+	                    )
+	                ),
+	                React.createElement(
+	                    'tbody',
+	                    null,
+	                    patients
+	                )
 	            )
 	        );
 	    }
