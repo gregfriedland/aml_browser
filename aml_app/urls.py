@@ -1,16 +1,33 @@
 from django.urls import path, include
 from . import views
 from rest_framework import routers, serializers, viewsets
+from rest_framework.response import Response
 from . import models
 
 class PatientListSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Patient
-        fields = ('patient_id', 'gender', 'ethnicity', 'platelet_result_count', 'vital_status')
+        fields = ('patient_id', 'gender', 'ethnicity', 'platelet_result_count', 'vital_status', 'id')
 
 class PatientListViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = models.Patient.objects.all()
     serializer_class = PatientListSerializer
+
+    def search(self, request, query):
+        from django.db.models import CharField
+        from django.db.models import  Q
+
+        fields = [f for f in models.Patient._meta.fields if isinstance(f, CharField)]
+        queries = [Q(**{f.name + "__contains": query}) for f in fields]
+
+        print("query", query)
+        qs = Q()
+        for query in queries:
+            qs = qs | query
+        queryset = models.Patient.objects.filter(qs)
+
+        serializer = PatientListSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 class FishTestComponentResultSerializer(serializers.ModelSerializer):
    class Meta:
@@ -18,6 +35,8 @@ class FishTestComponentResultSerializer(serializers.ModelSerializer):
         fields = ('fish_test_component', 'fish_test_component_percentage_value')
 
 class PatientDetailSerializer(serializers.ModelSerializer):
+    # use SlugRelatedField for the following three ManyToMany relationships
+    # because we don't want to serialize the key of each single key/value dict
     cytogenetic_abnormality = serializers.SlugRelatedField(many=True,
         read_only=True, slug_field='cytogenetic_abnormality')
 
@@ -27,6 +46,8 @@ class PatientDetailSerializer(serializers.ModelSerializer):
     molecular_analysis_abnormality_testing_result = serializers.SlugRelatedField(many=True,
         read_only=True, slug_field='molecular_analysis_abnormality_testing_result')
 
+    # This ManyToMany relationship actually has multiple values in its dict
+    # so we want to include the dict in the JSON
     fish_test_component = FishTestComponentResultSerializer(read_only=True, many=True)
 
     class Meta:
@@ -43,6 +64,7 @@ urlpatterns = [
     path('patient/v1', PatientListViewSet.as_view({'get': 'list'}), name='patients-api'),
     path('patient/<int:pk>/v1', PatientDetailViewSet.as_view({'get': 'retrieve'}),
         name='patient-detail-api'),
+    path('search/<str:query>/v1', PatientListViewSet.as_view({'get': 'search'}), name='search-api'),
 
     # pages
     # ex: /aml

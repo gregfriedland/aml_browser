@@ -62,7 +62,7 @@ var Patient = React.createClass({
                         }
                         sub_rows.push(<tr>{sub_row}</tr>);
                     }
-                    val = <div><table className="ui celled table"><thead>{sub_header}</thead><tbody>{sub_rows}</tbody></table></div>;
+                    val = <div><table className="ui celled table"><thead><tr>{sub_header}</tr></thead><tbody>{sub_rows}</tbody></table></div>;
                 }
                 table_body.push(<tr><td><b>{field}</b></td><td>{val}</td></tr>);
             } else {
@@ -72,7 +72,7 @@ var Patient = React.createClass({
         return (
             <div>
                 <h1>AML Patient {patient.patient_id}</h1>
-                <table className="ui complex table">
+                <table className="ui striped table">
                   <tbody>
                     {table_body}
                   </tbody>

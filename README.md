@@ -1,8 +1,7 @@
 ### AML data browser ###
 
 This repo implements the project specified at https://gist.github.com/lawrlee/f5ce3d91e6b6e4c0878a09134206f4aa
-It uses Django, sqlite, Django REST framework, ReactJS, and Semantic UI to provide a web application that allows browsing the AML data from the Cancer Genome Atlas dataset.
-
+It uses Django, sqlite, Django REST framework, ReactJS, and Semantic UI to provide a web application that allows browsing the AML data from the Cancer Genome Atlas dataset. In addition to the base requirements, it contains search box on the index page for searching for pations inside all fields (even hidden ones).
 
 #### Setup the server ####
 1. Setup your virtualenv and activate it
@@ -22,4 +21,3 @@ The ReactJS bundles are included in git. If you modify the code in `assets/js/` 
 The Semantic UI files are also in git. To change the theme, etc.:
 1. Install gulp: `npm install -g gulp`
 2. Rebuild: `(cd assets/semantic && gulp build)`
-
