@@ -1,7 +1,7 @@
 ### AML data browser ###
 
 This repo implements the project specified at https://gist.github.com/lawrlee/f5ce3d91e6b6e4c0878a09134206f4aa
-It uses Django, sqlite, Django REST framework, ReactJS, and Semantic UI to provide a web application that allows browsing the AML data from the Cancer Genome Atlas dataset. In addition to the base requirements, it contains search box on the index page for searching for pations inside all fields (even hidden ones).
+It uses Django, sqlite, Django REST framework, ReactJS, and Semantic UI to provide a web application that allows browsing the AML data from the Cancer Genome Atlas dataset. In addition to the base requirements, it contains a search box on the index page for searching for patients inside all fields (including hidden fields).
 
 #### Setup the server ####
 1. Setup your virtualenv and activate it
